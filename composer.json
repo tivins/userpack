@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "php": "=>8.1",
+    "php": ">=8.1",
     "tivins/database": "dev-main",
     "tivins/php-common": "dev-main",
     "firebase/php-jwt": "^6"
