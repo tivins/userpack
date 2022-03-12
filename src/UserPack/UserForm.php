@@ -25,7 +25,12 @@ class UserForm
         return true;
     }
 
-    public function getLoginFormId(): string
+    public function setActionURI(string $uri): static {
+        $this->actionURI = $uri;
+        return $this;
+    }
+
+    private function getLoginFormId(): string
     {
         return str_replace('\\', '.', __class__) . '.login';
     }
