@@ -6,7 +6,8 @@ use Tivins\Core\StringUtil;
 
 class UserForm
 {
-    private string $errors = '';
+    private string $actionURI = '/';
+    private string $errors    = '';
 
     public function loginCheck(UserModule $userModule, string $redirectionURI = '/')
     {
@@ -31,7 +32,7 @@ class UserForm
 
     public function login(array $options = [], ?string $errors = null): string
     {
-        $html = '<form method="post" action="/" class="login-form">';
+        $html = '<form method="post" action="' . $this->actionURI . '" class="login-form">';
         $html .= '<input type="hidden" name="formId" value="' . StringUtil::html($this->getLoginFormId()) . '">';
         if ($this->errors) {
             $html .= '<div class="field error">' . StringUtil::html($this->errors) . '</div>';
