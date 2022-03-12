@@ -6,7 +6,7 @@ use Tivins\Core\StringUtil;
 
 class UserForm
 {
-    private string $errors;
+    private string $errors = '';
 
     public function loginCheck(UserModule $userModule, string $redirectionURI = '/')
     {
