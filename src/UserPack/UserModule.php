@@ -75,7 +75,7 @@ class UserModule
         } catch (\Exception $e) {
             return false;
         }
-        $userID  = $decoded?->data?->uid;
+        $userID = $decoded?->data?->uid;
         if (!$userID) {
             return false;
         }
