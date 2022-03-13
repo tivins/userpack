@@ -53,15 +53,19 @@ class UserModule
 
     public function createUser(string $name, string $email, string $clearPassword): int
     {
-        $this->db->insert($this->tableName)
-            ->fields([
-                'name' => $name,
-                'email' => $email,
-                'password' => password_hash($clearPassword, PASSWORD_DEFAULT),
-                'created' => time(),
-            ])
-            ->execute();
-        return $this->db->lastId();
+        try {
+            $this->db->insert($this->tableName)
+                ->fields([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => password_hash($clearPassword, PASSWORD_DEFAULT),
+                    'created' => time(),
+                ])
+                ->execute();
+            return $this->db->lastId();
+        } catch (\Exception $ex) {
+            return 0;
+        }
     }
 
     public function getFromHTTPAuthorization(WebToken $webToken): object|false

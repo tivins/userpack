@@ -20,4 +20,11 @@ class UserSession
     {
         $_SESSION[self::$sessionKey] = $id;
     }
+
+    public static function getUser(UserModule $module): object|false
+    {
+        $uid = self::getID();
+        if (! $uid) return false;
+        return $module->getById($uid);
+    }
 }
