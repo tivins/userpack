@@ -26,10 +26,8 @@ class UserForm
         if ($user) {
             UserSession::setID($user->id);
             $this->msgLogin->push('Success', Msg::Success);
-
         }
         else {
-
             $this->msgLogin->push('Invalid credentials', Msg::Error);
         }
         header('Location: ' . $redirectionURI);
@@ -50,25 +48,25 @@ class UserForm
     public function login(array $options = []): string
     {
         $html = '<form method="post" action="' . $this->actionURI . '" class="login-form">';
-        $html .= '<input type="hidden" name="formId" value="' . StringUtil::html($this->getLoginFormId()) . '">';
         $html .= $this->msgLogin->get();
+        $html .= '<input type="hidden" name="formId" value="' . StringUtil::html($this->getLoginFormId()) . '">';
         $html .= '<div class="field"><label for="login-form-name">Name</label><input id="login-form-name" type="text" required name="name"/></div>';
         $html .= '<div class="field"><label for="login-form-password">Password</label><input id="login-form-password" required type="password" name="password"/></div>';
-        $html .= '<div class="field"><button type="submit">Log In</button></div>';
+        $html .= '<div class="field"><button type="submit">Sign in</button></div>';
         $html .= '</form>';
         return $html;
     }
 
     public function register(array $options = []): string
     {
-        $html = '<form method="post" action="' . $this->actionURI . '" class="login-form">';
+        $html = '<form method="post" action="' . $this->actionURI . '" class="register-form">';
         $html .= $this->msgRegister->get();
         $html .= '<input type="hidden" name="formId" value="' . StringUtil::html($this->getRegisterFormId()) . '">';
         $html .= '<div class="field"><label for="login-form-name">Name</label><input id="login-form-name" type="text" required name="name"/></div>';
         $html .= '<div class="field"><label for="login-form-email">Email</label><input id="login-form-email" type="email" required name="email"/></div>';
         $html .= '<div class="field"><label for="login-form-password">Password</label><input id="login-form-password" required type="password" name="password"/></div>';
-        $html .= '<div class="field"><label for="login-form-password-confirm">Confirm</label><input id="login-form-password-confirm" required type="password" name="password-confirm"/></div>';
-        $html .= '<div class="field"><button type="submit">Register</button></div>';
+        $html .= '<div class="field"><label for="login-form-password-confirm">Confirm password</label><input id="login-form-password-confirm" required type="password" name="password-confirm"/></div>';
+        $html .= '<div class="field"><button type="submit">Sign up</button></div>';
         $html .= '</form>';
         return $html;
     }
@@ -83,6 +81,13 @@ class UserForm
         if (($_POST['formId'] ?? '') != $this->getRegisterFormId()) {
             return false;
         }
+
+        if ($_POST['password'] !== $_POST['password-confirm']) {
+            $this->msgRegister->push('Passwords were different', Msg::Success);
+            header('Location: ' . $redirectionURI);
+            exit;
+        }
+
         $uid = $userModule->createUser($_POST['name'], $_POST['email'], $_POST['password']);
         if ($uid) {
             $this->msgRegister->push('User created', Msg::Success);
