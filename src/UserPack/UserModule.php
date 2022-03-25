@@ -41,12 +41,20 @@ class UserModule
             ->addUniqueKey(['email'])
             ->addUniqueKey(['name'])
             ->addInteger('created', 0, true)
-            ->addInteger('deleted', null, true);
+            ->addInteger('accessed', null, true)
+            ->addInteger('updated', null, true)
+            ->addInteger('deleted', null, true)
+            ;
         $this->alterCreateTable($query);
         $query->execute();
         return $this;
     }
 
+    /**
+     * This method could be overridden in an extended class. It allows to alter the creation query.
+     * @param CreateQuery $query
+     * @return void
+     */
     public function alterCreateTable(CreateQuery $query): void
     {
     }
