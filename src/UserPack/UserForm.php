@@ -50,10 +50,11 @@ class UserForm
         $html .= '<input type="hidden" name="formId" value="' . StringUtil::html($this->getLoginFormId()) . '">';
         $html .= '<div class="field"><label for="login-form-name">Name</label><input id="login-form-name" type="text" required name="name"/></div>';
         $html .= '<div class="field">
-              <div class="d-flex">
-                <label for="login-form-password">Password</label><input id="login-form-password" required type="password" name="password"/>
-                <a href="/user/password" class="fs-80">forgot?</a>
-              </div>
+                  <div class="d-flex">
+                    <label for="login-form-password" class="flex-grow">Password</label>
+                    <a href="/user/password" class="fs-80">forgot?</a>
+                  </div>
+                  <input id="login-form-password" required type="password" name="password"/>
               </div>';
         $html .= '<div class="field"><button type="submit">Sign in</button></div>';
         $html .= '</form>';
