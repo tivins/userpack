@@ -3,6 +3,7 @@
 namespace Tivins\UserPack;
 
 use Tivins\Core\Http\Status as HTTPStatus;
+use Tivins\Database\Conditions;
 use Tivins\Database\CreateQuery;
 use Tivins\Database\Database;
 use Tivins\Database\Exceptions\ConditionException;
@@ -59,6 +60,15 @@ class UserModule
     {
     }
 
+    public function exists(string $name, string $email): bool
+    {
+        return $this->getByCondition(
+            $this->db->or()
+                ->condition('name', $name)
+                ->condition('email', $email)
+        ) !== false;
+    }
+
     public function createUser(string $name, string $email, string $clearPassword): int
     {
         try {
@@ -94,14 +104,18 @@ class UserModule
         return $this->getById($userID);
     }
 
-    public function getById(int $id): object|false
+    public function getByCondition(Conditions $conds): object|false
     {
         return $this->db->select($this->tableName, 't')
             ->addFields('t')
-            ->condition('t.id', $id)
-            ->isNull('t.deleted')
+            ->condition($conds)
             ->execute()
-            ->fetch();
+            ->fetch() ?? false;
+    }
+
+    public function getById(int $id): object|false
+    {
+        return $this->getByCondition($this->db->and()->condition('id', $id)->isNull('deleted'));
     }
 
     public function getByCredentials(string $name, string $clearPassword): object|false
