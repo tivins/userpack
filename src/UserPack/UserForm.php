@@ -105,26 +105,28 @@ class UserForm
 
         $html = '<form method="post" action="' . $this->actionURI . '" class="register-form">';
         $html .= $this->msgRegister->get();
-        $html .= '<input type="hidden" name="formId" value="' . StringUtil::html($this->getRegisterFormId()) . '">';
-        $html .= '<input type="hidden" name="token" value="' . StringUtil::html(FormSecurity::getPublicToken($this->getLoginFormId())) . '">';
+        $html .= '<input type="hidden" name="formId" value="' . $this->getRegisterFormId() . '">';
+        $html .= '<input type="hidden" name="token" value="' . FormSecurity::getPublicToken($this->getLoginFormId()) . '">';
         $html .= '<div class="field">'
-            . '<label for="register-form-name">Name</label>'
+            . '<label for="register-form-name">' . StringUtil::html($this->translate('User name')) . '</label>'
             . '<input id="register-form-name" type="text" required name="name" value="' . StringUtil::html($_POST['name'] ?? '') . '"/>'
             . '</div>';
         $html .= '<div class="field">'
-            . '<label for="register-form-email">Email</label>'
+            . '<label for="register-form-email">' . StringUtil::html($this->translate('Email')) . '</label>'
             . '<input id="register-form-email" type="email" required name="email" value="' . StringUtil::html($_POST['email'] ?? '') . '"/>'
             . '</div>';
         $html .= '<div class="field">'
-            . '<label for="register-form-password">Password</label>'
+            . '<label for="register-form-password">' . StringUtil::html($this->translate('Password')) . '</label>'
             . '<input id="register-form-password" required type="password" name="password"/>'
             . '</div>';
         $html .= '<div class="field">'
-            . '<label for="register-form-password-confirm">Confirm password</label>'
+            . '<label for="register-form-password-confirm">' . StringUtil::html($this->translate('Confirm password')) . '</label>'
             . '<input id="register-form-password-confirm" required type="password" name="password-confirm"/>'
             . '</div>';
         $html .= '<div class="field">'
-            . '<label for="register-form-captcha">Anti-robot test : ' . StringUtil::html($catchaQuestion) . '</label><input id="register-form-captcha" type="text" required name="captcha"/></div>';
+            . '<label for="register-form-captcha">Anti-robot test : ' . StringUtil::html($catchaQuestion) . '</label>'
+            . '<input id="register-form-captcha" type="text" required name="captcha"/>'
+            . '</div>';
         $html .= '<div class="field"><button type="submit">Sign up</button></div>';
         $html .= '</form>';
         return $html;
@@ -135,11 +137,9 @@ class UserForm
      */
     private function generateCaptcha(): string
     {
-        $a                            = rand(1, 9);
-        $b                            = rand(1, 9);
-        $response                     = $a + $b;
-        $_SESSION['userpack_captcha'] = $response;
-        return "$a + $b =";
+        $numbers = [rand(1, 9), rand(1, 9)];
+        $_SESSION['userpack_captcha'] = array_sum($numbers);
+        return implode(' + ', $numbers). ' = ';
     }
 
     private function getRegisterFormId(): string
@@ -157,7 +157,7 @@ class UserForm
         }
 
         if (!FormSecurity::checkPostedToken($this->getLoginFormId(), $_POST['token'] ?? '')) {
-            $this->msgLogin->push($this->translate('Form security error. Please retry.'), Msg::Error);
+            $this->msgLogin->push($this->translate('security_token_error'), Msg::Error);
             return false;
         }
 
