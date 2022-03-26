@@ -9,6 +9,7 @@ use Tivins\Core\StringUtil;
 class UserForm
 {
     private string $actionURI = '/';
+
     private Msg    $msgLogin;
     private Msg    $msgRegister;
 
@@ -35,10 +36,6 @@ class UserForm
         HTTP::redirect($redirectionURI);
     }
 
-    private function getLoginFormId(): string
-    {
-        return str_replace('\\', '.', __class__) . '.login';
-    }
 
     public function setActionURI(string $uri): static
     {
@@ -52,19 +49,32 @@ class UserForm
         $html .= $this->msgLogin->get();
         $html .= '<input type="hidden" name="formId" value="' . StringUtil::html($this->getLoginFormId()) . '">';
         $html .= '<div class="field"><label for="login-form-name">Name</label><input id="login-form-name" type="text" required name="name"/></div>';
-        $html .= '<div class="field"><a href="/user/password" style="float:right">forgot?</a><label for="login-form-password">Password</label><input id="login-form-password" required type="password" name="password"/></div>';
+        $html .= '<div class="field">
+              <div class="d-flex">
+                <label for="login-form-password">Password</label><input id="login-form-password" required type="password" name="password"/>
+                <a href="/user/password" class="fs-80">forgot?</a>
+              </div>
+              </div>';
         $html .= '<div class="field"><button type="submit">Sign in</button></div>';
         $html .= '</form>';
         return $html;
     }
 
-    private function getRegisterFormId(): string
+    /**
+     * @return string The question to ask.
+     */
+    private function generateCaptcha(): string
     {
-        return str_replace('\\', '.', __class__) . '.register';
+        $a = rand(1, 9);
+        $b = rand(1, 9);
+        $response = $a + $b;
+        $_SESSION['userpack_captcha'] = $response;
+        return "$a + $b =";
     }
-
+    
     public function register(array $options = []): string
     {
+        $catchaQuestion = $this->generateCaptcha(); 
         $html = '<form method="post" action="' . $this->actionURI . '" class="register-form">';
         $html .= $this->msgRegister->get();
         $html .= '<input type="hidden" name="formId" value="' . StringUtil::html($this->getRegisterFormId()) . '">';
@@ -72,6 +82,7 @@ class UserForm
         $html .= '<div class="field"><label for="login-form-email">Email</label><input id="login-form-email" type="email" required name="email"/></div>';
         $html .= '<div class="field"><label for="login-form-password">Password</label><input id="login-form-password" required type="password" name="password"/></div>';
         $html .= '<div class="field"><label for="login-form-password-confirm">Confirm password</label><input id="login-form-password-confirm" required type="password" name="password-confirm"/></div>';
+        $html .= '<div class="field"><label for="login-form-captcha">Anti-robot test : '.StringUtil::html($catchaQuestion).'</label><input id="login-form-captcha" type="text" required name="captcha"/></div>';
         $html .= '<div class="field"><button type="submit">Sign up</button></div>';
         $html .= '</form>';
         return $html;
@@ -83,8 +94,13 @@ class UserForm
             return false;
         }
 
+        if (empty($_SESSION['userpack_captcha']) || ($_POST['captcha']??'*') != $_SESSION['userpack_captcha']) {
+            $this->msgRegister->push('Captcha invalid', Msg::Error);
+            HTTP::redirect($redirectionURI);
+        }
+
         if ($_POST['password'] !== $_POST['password-confirm']) {
-            $this->msgRegister->push('Passwords were different', Msg::Success);
+            $this->msgRegister->push('Passwords were different', Msg::Error);
             HTTP::redirect($redirectionURI);
         }
 
@@ -96,5 +112,14 @@ class UserForm
             $this->msgRegister->push('User cannot be created', Msg::Error);
         }
         HTTP::redirect($redirectionURI);
+    }
+
+    private function getLoginFormId(): string
+    {
+        return base64_encode(static::class . '.' . __function__);
+    }
+    private function getRegisterFormId(): string
+    {
+        return base64_encode(static::class . '.' . __function__);
     }
 }
