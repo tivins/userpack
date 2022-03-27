@@ -15,14 +15,17 @@ class Translations extends TranslationModule
             'User name'           => [
                 'fr' => 'Nom d\'utilisateur',
                 'en' => 'User name',
+                'it' => 'Nome utente',
             ],
             'Sign in'             => [
                 'fr' => 'S\'identifier',
                 'en' => 'Sign in',
+                'it' => 'Identificarsi',
             ],
             'Password'            => [
                 'fr' => 'Mot de passe',
                 'en' => 'Password',
+                'it' => 'Password',
             ],
             'Confirm password'    => [
                 'fr' => 'Confirmation du mot de passe',

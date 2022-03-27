@@ -12,7 +12,7 @@ class UserForm
 {
     private string $actionURI = '/';
 
-    private ?I18n $i18n = null;
+    private I18n $i18n;
     private Msg   $msgLogin;
     private Msg   $msgRegister;
 
@@ -34,10 +34,12 @@ class UserForm
 
     public function login(array $options = []): string
     {
+        $options += ['forgotURL' => ''];
+
         $html = '<form method="post" action="' . $this->actionURI . '" class="login-form">';
         $html .= $this->msgLogin->get();
-        $html .= '<input type="hidden" name="formId" value="' . StringUtil::html($this->getLoginFormId()) . '">';
-        $html .= '<input type="hidden" name="token" value="' . StringUtil::html(FormSecurity::getPublicToken($this->getLoginFormId())) . '">';
+        $html .= '<input type="hidden" name="formId" value="' . $this->getLoginFormId() . '">';
+        $html .= '<input type="hidden" name="token" value="' . FormSecurity::getPublicToken($this->getLoginFormId()) . '">';
         $html .= '<div class="field">'
             . '<label for="login-form-name">' . StringUtil::html($this->translate('User name')) . '</label>'
             . '<input id="login-form-name" type="text" required name="name"/>'
@@ -45,7 +47,7 @@ class UserForm
         $html .= '<div class="field">'
             . '<div class="d-flex">'
             . '<label for="login-form-password" class="flex-grow">' . StringUtil::html($this->translate('Password')) . '</label>'
-            . '<a href="/user/password" class="fs-80">' . StringUtil::html($this->translate('Forgot password?')) . '</a>'
+            . ($options['forgotURL'] ? '<a href="' . $options['forgotURL'] . '" class="fs-80">' . StringUtil::html($this->translate('Forgot password?')) . '</a>' : '')
             . '</div>'
             . '<input id="login-form-password" required type="password" name="password"/>'
             . '</div>';
@@ -73,7 +75,7 @@ class UserForm
         }
 
         if (!FormSecurity::checkPostedToken($this->getLoginFormId(), $_POST['token'] ?? '')) {
-            $this->msgLogin->push($this->translate('SECURITY ERROR'), Msg::Error);
+            $this->msgLogin->push($this->translate('security_token_error'), Msg::Error);
             HTTP::redirect($redirectionURI);
         }
 
