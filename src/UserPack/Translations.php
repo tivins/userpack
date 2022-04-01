@@ -12,36 +12,43 @@ class Translations extends TranslationModule
     protected function getAll(): array
     {
         return [
-            'User name'           => [
-                'fr' => 'Nom d\'utilisateur',
+            'UserName'           => [
                 'en' => 'User name',
+                'fr' => 'Nom d\'utilisateur',
                 'it' => 'Nome utente',
+                'es' => 'Nombre de usuario',
+                'de' => 'Name des nutzers',
+                'nl' => 'Naam gebruiker',
             ],
             'Sign in'             => [
-                'fr' => 'S\'identifier',
                 'en' => 'Sign in',
+                'fr' => 'S\'identifier',
                 'it' => 'Identificarsi',
             ],
             'Password'            => [
-                'fr' => 'Mot de passe',
                 'en' => 'Password',
+                'fr' => 'Mot de passe',
                 'it' => 'Password',
             ],
-            'Confirm password'    => [
-                'fr' => 'Confirmation du mot de passe',
-                'en' => 'Confirm password',
+            'CurrentPassword'            => [
+                'en' => 'Current password',
+                'fr' => 'Mot de passe actuel',
             ],
-            'Forgot password?'    => [
+            'ConfirmPassword'    => [
+                'en' => 'Confirm password',
+                'fr' => 'Confirmation du mot de passe',
+            ],
+            'ForgotPassword'    => [
+                'en' => 'Forgot password?',
                 'fr' => 'mot de passe oublié ?',
-                'en' => 'Forgot password',
             ],
             'Invalid credentials' => [
-                'fr' => 'Identifiants erronés',
                 'en' => 'Invalid credentials',
+                'fr' => 'Identifiants erronés',
             ],
             'security_token_error' => [
-                'fr' => 'Erreur de sécurité du formulaire. merci de ré-essayer.',
                 'en' => 'Form security error. Please retry.',
+                'fr' => 'Erreur de sécurité du formulaire. merci de ré-essayer.',
             ]
         ];
     }
